@@ -1,0 +1,39 @@
+.profile-card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  padding: 20px;
+  text-align: center;
+}
+
+.profile-picture {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 15px;
+  border: 3px solid #007bff;
+}
+
+.profile-card h3 {
+  margin: 10px 0 5px;
+  color: #333;
+}
+
+.profile-card .job-title {
+  color: #555;
+  font-size: 0.95em;
+  margin-bottom: 5px;
+}
+
+.profile-card .location {
+  color: #777;
+  font-size: 0.9em;
+  margin-bottom: 15px;
+}
+
+.profile-card .bio {
+  font-size: 0.9em;
+  color: #666;
+  line-height: 1.5;
+}

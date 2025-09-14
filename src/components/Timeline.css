@@ -1,0 +1,75 @@
+.timeline-card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  padding: 20px;
+  grid-column: span 2; /* Make it span two columns in the grid for better layout */
+}
+
+.timeline-card h4 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.timeline {
+  position: relative;
+  margin: 0 auto;
+  padding: 0 10px;
+}
+
+.timeline-item {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-left: 4px solid #007bff;
+  border-radius: 5px;
+  position: relative;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -12px;
+  top: 18px;
+  width: 10px;
+  height: 10px;
+  background-color: #007bff;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+
+.timeline-item h5 {
+  margin: 0 0 5px;
+  color: #333;
+  font-size: 1.1em;
+}
+
+.timeline-item p {
+  margin: 0;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.timeline-description {
+  margin-top: 8px;
+  font-size: 0.85em;
+  color: #777;
+}
+
+/* Add a line down the middle of the timeline if desired */
+/* .timeline::after {
+  content: '';
+  position: absolute;
+  width: 2px;
+  background-color: #ddd;
+  top: 0;
+  bottom: 0;
+  left: 6px; /* Adjust based on dot position */
+  /* z-index: 0;
+} */
+/* .timeline-item { position: relative; z-index: 1; } */

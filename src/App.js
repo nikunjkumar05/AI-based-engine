@@ -1,71 +1,47 @@
-import React, { useState } from "react";
-import axios from "axios";
-import "./App.css";
+import React, { useState } from 'react';
+import './App.css'; // For general app styling if any
+
+// Import all page components
+import Login from './pages/login.js';
+import Dashboard from './pages/Dashboard.js'; // Assuming Dashboard is the main page after login
+
+// Import dashboard components for direct testing if needed
+import CandidateDashboard from './components/CandidateDashboard';
+import CompanyDashboard from './components/CompanyDashboard';
+import AdminDashboard from './components/AdminDashboard'; // Assuming you will create this next
 
 function App() {
-  const [file, setFile] = useState(null);
-  const [parsedData, setParsedData] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  // Simple state to simulate navigation/which dashboard to show
+  // For your hackathon, you might hardcode one for the demo
+  const [currentPage, setCurrentPage] = useState('candidate'); // 'login', 'dashboard', 'candidate', 'company', 'admin'
 
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
-    setError("");
-  };
-
-  const handleUpload = async () => {
-    if (!file) return setError("Please select a file!");
-    setLoading(true);
-    setError("");
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      const res = await axios.post("http://127.0.0.1:8000/parse_resume/", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      setParsedData(res.data);
-    } catch (err) {
-      setError("Failed to parse resume. Please try again.");
+  const renderPage = () => {
+    switch (currentPage) {
+      case 'login':
+        return <Login onLoginSuccess={() => setCurrentPage('dashboard')} />;
+      case 'dashboard': // This would typically show the user's specific dashboard
+        return <Dashboard />; // Render a generic dashboard or conditional render based on user type
+      case 'candidate':
+        return <CandidateDashboard />;
+      case 'company':
+        return <CompanyDashboard />;
+      case 'admin':
+        return <AdminDashboard />; // Will be created soon
+      default:
+        return <Login onLoginSuccess={() => setCurrentPage('dashboard')} />;
     }
-    setLoading(false);
   };
 
   return (
-    <div className="container">
-      <h2>Resume Parser</h2>
-
-      <div className="upload-section">
-        <label className="upload-label">
-          <input type="file" onChange={handleFileChange} hidden />
-          <span className="upload-area">
-            {file ? file.name : "Drag & drop or click to select a PDF"}
-          </span>
-        </label>
-        <button onClick={handleUpload} disabled={loading}>
-          {loading ? "Uploading..." : "Upload Resume"}
-        </button>
-      </div>
-      {error && <div className="error">{error}</div>}
-
-      {parsedData && (
-        <div className="result-card">
-          <h3>Extracted Information</h3>
-          <p><strong>Name:</strong> {parsedData.name}</p>
-          <p><strong>Email:</strong> {parsedData.contact.email || "N/A"}</p>
-          <p><strong>Phone:</strong> {parsedData.contact.phone || "N/A"}</p>
-          <p><strong>Experience:</strong> {parsedData.experience}</p>
-          <p><strong>Education:</strong> {parsedData.education.length ? parsedData.education.join(", ") : "N/A"}</p>
-          <div>
-            <strong>Skills:</strong>
-            <div className="skills">
-              {parsedData.skills.length ? parsedData.skills.map((skill, i) => (
-                <span key={i} className="skill-tag">{skill}</span>
-              )) : <span>N/A</span>}
-            </div>
-          </div>
-        </div>
-      )}
+    <div className="App">
+      <nav style={{ padding: '10px', backgroundColor: '#f0f0f0', marginBottom: '20px', display: 'flex', gap: '15px' }}>
+        <button onClick={() => setCurrentPage('login')}>Login</button>
+        <button onClick={() => setCurrentPage('dashboard')}>User Dashboard (Placeholder)</button>
+        <button onClick={() => setCurrentPage('candidate')}>Candidate Dashboard</button>
+        <button onClick={() => setCurrentPage('company')}>Company Dashboard</button>
+        <button onClick={() => setCurrentPage('admin')}>Admin Dashboard</button>
+      </nav>
+      {renderPage()}
     </div>
   );
 }
