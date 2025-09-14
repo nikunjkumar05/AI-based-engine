@@ -5,7 +5,7 @@ import pprint
 # Step 1: Establish a connection to the MongoDB server
 # Make sure your MongoDB server is running!
 try:
-    client = MongoClient('mongodb://localhost:27017/', serverSelectionTimeoutMS=5000)
+    client = MongoClient("mongodb+srv://r4-rahul123:r4rahul123@cluster05.fawchhh.mongodb.net/?retryWrites=true&w=majority")
     # The ismaster command is cheap and does not require auth.
     client.admin.command('ismaster')
     print("✅ Connected to MongoDB successfully!")

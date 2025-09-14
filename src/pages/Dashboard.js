@@ -1,70 +1,54 @@
+// src/components/Dashboard.js
 import React, { useState, useEffect } from 'react';
-import ProfileCard from '../components/ProfileCard'; // Correct import path
-import Skills from '../components/Skills';           // Correct import path
-import Timeline from '../components/Timeline';       // Correct import path
-import './Dashboard.css'; // Add a CSS file for Dashboard styling
+import ProfileCard from './ProfileCard';
+import Skills from './Skills';
+// Assuming you have a Timeline component, otherwise remove it
+// import Timeline from './Timeline'; 
+import './Dashboard.css';
 
 function Dashboard() {
-  const [profileData, setProfileData] = useState(null); // Initial state is null
+  const [profileData, setProfileData] = useState(null);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    // Simulate fetching user profile data from an API
-    setTimeout(() => {
-      const fetchedProfile = {
-        name: "Sangeetha K.",
-        email: "sangeetha@example.com",
-        jobTitle: "Aspiring Data Scientist",
-        location: "Bengaluru, India",
-        profilePicture: "https://via.placeholder.com/100", // Placeholder
-        bio: "Passionate about AI/ML and making an impact.",
-        
-        // --- IMPORTANT: Ensure these are ARRAYS or objects you INTEND to convert ---
-        skills: ["Python", "SQL", "Machine Learning", "React", "Data Analysis", "Cloud Computing (AWS)"],
-        
-        // Example 1: Education data as an array (ideal)
-        education: [
-          { degree: "B.Tech in CS", institution: "ABC University", year: "2020 - 2024" },
-          { degree: "High School Diploma", institution: "XYZ School", year: "2020" }
-        ],
+    const fetchCandidateData = async () => {
+      // In a real app, this ID would come from the URL or user session.
+      // For now, you must get an ID from your MongoDB database and paste it here.
+      const candidateId = "68c7307d6fa8a08b0b13c5f9";
 
-        // Example 2: Experience data as an array (ideal)
-        experience: [
-          { role: "Data Science Intern", company: "Innovate AI", duration: "Summer 2023" },
-          { role: "Web Development Intern", company: "WebTech Solutions", duration: "Spring 2022" }
-        ],
+      if (candidateId === "68c7307d6fa8a08b0b13c5f9") {
+        setError("Please update Dashboard.js with a real candidate ID from your MongoDB.");
+        return;
+      }
+      
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/candidates/${candidateId}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+        setProfileData(data);
+      } catch (e) {
+        setError("Failed to fetch candidate data. Is the backend server running?");
+        console.error(e);
+      }
+    };
 
-        // Example 3: If an API returns 'education' as an object (LESS IDEAL, but handled below)
-        // education_as_object: {
-        //   item1: { degree: "B.Tech in CS", institution: "ABC University", year: "2020 - 2024" },
-        //   item2: { degree: "High School Diploma", institution: "XYZ School", year: "2020" }
-        // },
-      };
-      setProfileData(fetchedProfile);
-    }, 1500); // Simulate network delay
-  }, []);
+    fetchCandidateData();
+  }, []); // The empty array ensures this runs only once when the component mounts
+
+  if (error) {
+    return <div className="dashboard-loading"><p style={{color: 'red'}}>{error}</p></div>;
+  }
 
   if (!profileData) {
     return (
       <div className="dashboard-loading">
         <p>Loading profile data...</p>
-        {/* Optional: Add a spinner */}
         <div className="spinner"></div>
       </div>
     );
   }
-
-  // --- Data Transformation for Timeline Components ---
-  // This is the crucial part to prevent "items.map is not a function"
-  // If 'profileData.education' is an object, convert it to an array.
-  // Otherwise, use it as is.
-  const educationItems = Array.isArray(profileData.education)
-    ? profileData.education
-    : (profileData.education ? Object.values(profileData.education) : []); // Handles object or null/undefined
-
-  const experienceItems = Array.isArray(profileData.experience)
-    ? profileData.experience
-    : (profileData.experience ? Object.values(profileData.experience) : []); // Handles object or null/undefined
-
 
   return (
     <div className="dashboard-page-container">
@@ -78,8 +62,9 @@ function Dashboard() {
           bio={profileData.bio}
         />
         <Skills skills={profileData.skills} />
-        <Timeline title="Education" items={educationItems} /> {/* Pass processed items */}
-        <Timeline title="Experience" items={experienceItems} /> {/* Pass processed items */}
+        {/* If you have a Timeline component, you can add it back here */}
+        {/* <Timeline title="Education" items={profileData.education} /> */}
+        {/* <Timeline title="Experience" items={profileData.experience} /> */}
       </div>
     </div>
   );
