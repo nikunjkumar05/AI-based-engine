@@ -1,7 +1,9 @@
-from pydantic import BaseModel
-from typing import List, Dict, Any, Optional
+# backend/models.py
 
-# --- Shared Models (e.g., for Timeline items) ---
+from pydantic import BaseModel, Field
+from typing import List, Optional
+
+# --- Shared Models ---
 class EducationItem(BaseModel):
     degree: str
     institution: str
@@ -11,13 +13,13 @@ class ExperienceItem(BaseModel):
     role: str
     company: str
     duration: str
-    description: Optional[str] = None # Added description
+    description: Optional[str] = None
 
-# Removed SkillTag as skills are just List[str] in CandidateProfile
-
-# --- Candidate Profile Models ---
+# --- Candidate Profile Model ---
 class CandidateProfile(BaseModel):
-    id: str
+    # The 'id' field is now optional and will be populated after DB insertion.
+    # We use an alias to map this field to MongoDB's '_id'.
+    id: Optional[str] = Field(alias='_id', default=None)
     name: str
     email: str
     jobTitle: str
@@ -28,5 +30,22 @@ class CandidateProfile(BaseModel):
     education: List[EducationItem]
     experience: List[ExperienceItem]
 
-# Removed InternshipPostRequest and CompanyInternship for brevity (assuming they are elsewhere or not needed for this flow)
-# Removed AdminAnalytics for brevity
+    class Config:
+        # This allows Pydantic to work with object attributes and aliases
+        populate_by_name = True
+        
+class User(BaseModel):
+    username: str
+    email: Optional[str] = None
+    full_name: Optional[str] = None
+    disabled: Optional[bool] = None
+
+class UserInDB(User):
+    hashed_password: str
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    username: Optional[str] = None

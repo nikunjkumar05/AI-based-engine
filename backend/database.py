@@ -1,35 +1,36 @@
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+# backend/database.py
 
-# SQLite database URL
-SQLALCHEMY_DATABASE_URL = "sqlite:///./internship_matching.db"
+from pymongo import MongoClient
+from pymongo.database import Database
 
-# Create the SQLAlchemy engine
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False} # Needed for SQLite
-)
+# --- MongoDB Connection ---
+# Replace with your MongoDB connection string.
+# For local MongoDB: "mongodb://localhost:27017/"
+# For Atlas: "mongodb+srv://<user>:<password>@<cluster-url>/"
+MONGO_DATABASE_URL = "mongodb+srv://r4-rahul123:r4rahul123@cluster05.fawchhh.mongodb.net/?retryWrites=true&w=majority"
+DATABASE_NAME = "resume_parser"
 
-# Create a SessionLocal class
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+class MongoDB:
+    def __init__(self, db_url: str, db_name: str):
+        self.client = MongoClient(db_url)
+        self.db = self.client[db_name]
 
-# Base class for your ORM models
-Base = declarative_base()
+    def get_db(self) -> Database:
+        return self.db
 
-# Function to get database session (used as FastAPI dependency)
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+    def close(self):
+        self.client.close()
 
-# Example SQLAlchemy model (you'll define full models in models.py if truly using DB)
-# from sqlalchemy import Column, Integer, String
-# class DBCandidate(Base):
-#     __tablename__ = "candidates"
-#     id = Column(Integer, primary_key=True, index=True)
-#     name = Column(String, index=True)
-#     email = Column(String, unique=True, index=True)
-#     skills = Column(String) # Store as comma-separated string or use a relationship table
-#     # ... more fields
+# Create a single instance of the MongoDB connection
+mongodb = MongoDB(MONGO_DATABASE_URL, DATABASE_NAME)
+
+# Dependency function to get the database session
+def get_mongo_db() -> Database:
+    """
+    FastAPI dependency that provides a MongoDB database instance.
+    """
+    return mongodb.get_db()
+
+# Optional: Add shutdown event in main.py to close connection gracefully
+def close_mongo_connection():
+    mongodb.close()
